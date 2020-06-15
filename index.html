@@ -27,7 +27,10 @@
 <select id="muni_sel"></select>
 <div id="vsechny" class="grafik"></div>
 
-<div id="brno" class="grafik"></div>
+<div id="velvary" class="grafik"></div>
+<div id="smrzovka" class="grafik"></div>
+<div id="brezina" class="grafik"></div>
+<div id="praha" class="grafik"></div>
 
 <script>
 let host = 'https://data.irozhlas.cz/covid-rud/'
@@ -35,10 +38,16 @@ if (location.hostname === 'localhost') {
   host = 'http://localhost/covid-rud/'
 }
 
+function thousandSep(val) {
+	return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+}
+
 function draw(did, rec) {
 	Highcharts.setOptions({
 		lang: {
-			numericSymbols: ['tis.', 'mil.', 'mld.', 'T', 'P', 'E']
+			numericSymbols: [' tis.', ' mil.', ' mld.', 'T', 'P', 'E'],
+			thousandsSep: ' ',
+			decimalPoint: ','
 		}
 	})
 	Highcharts.chart(did, {
@@ -76,7 +85,9 @@ function draw(did, rec) {
 		},
 		tooltip: {
 			headerFormat: '<b>{point.x}</b><br/>',
-			pointFormat: '{series.name}: {point.y}<br/>celkem: {point.stackTotal}'
+			pointFormatter: function(e) {
+				return `${this.series.name}: ${thousandSep(this.y)} Kč<br/>celkem: ${thousandSep(this.stackTotal)} Kč`
+			}
 		},
 		plotOptions: {
 			column: {
@@ -90,6 +101,16 @@ function draw(did, rec) {
 					legendItemClick: function () {
 						if (typeof ga === 'function') {
 							ga('gtm1.send', 'event', 'vizualizace', 'graf', 'filtr_legenda')
+  						}
+					},
+					mouseOver: function () {
+						if (typeof ga === 'function') {
+							ga('gtm1.send', 'event', 'vizualizace', 'graf', 'tooltip_over')
+  						}
+					},
+					click: function () {
+						if (typeof ga === 'function') {
+							ga('gtm1.send', 'event', 'vizualizace', 'graf', 'tooltip_click')
   						}
 					}
 				}
