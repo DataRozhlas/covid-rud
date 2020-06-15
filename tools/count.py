@@ -4,6 +4,7 @@ import pandas as pd
 import xml.etree.ElementTree as et
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
 import json
+import icu
 
 # %%
 t = et.fromstring(requests.get('https://www.smscr.cz/kalkulacka/rud/resources/data_2020.xml').text)
@@ -89,12 +90,18 @@ for ftr in gjs['features']:
 
 # %%
 with open('mapa.json', 'w', encoding='utf-8') as f:
-    f.write(json.dumps(sorted(out, key=lambda x: x[0]), ensure_ascii=False))
+    f.write(json.dumps(sorted(out, key=lambda x: x[0].lower()), ensure_ascii=False))
 # %%
 d.columns
 
 
 # %%
 (d.celk_ztrata / d.pob).max()
+
+# %%
+alp = ['a', 'á', 'b', 'c', 'č', 'd', 'ď', 'e', 'é', 'ě', 'f', 'g', 'h', 'ch', 'i', 'í', 'j', 'k', 'l', 'm', 'n', 'ň', 'o', 'ó', 'p', 'q', 'r', 'ř', 's', 'š', 't', 'ť', 'u', 'ú', 'ů', 'v', 'w', 'x', 'y', 'ý', 'z', 'ž']
+a = ['a', 'czernin', 'chuj']
+sorted(a)
+sorted(a, key=lambda word: tuple(alp.index(c) for c in word.lower()))
 
 # %%
