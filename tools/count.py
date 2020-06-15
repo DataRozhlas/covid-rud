@@ -4,7 +4,7 @@ import pandas as pd
 import xml.etree.ElementTree as et
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
 import json
-import icu
+import locale
 
 # %%
 t = et.fromstring(requests.get('https://www.smscr.cz/kalkulacka/rud/resources/data_2020.xml').text)
@@ -103,5 +103,10 @@ alp = ['a', 'á', 'b', 'c', 'č', 'd', 'ď', 'e', 'é', 'ě', 'f', 'g', 'h', 'ch
 a = ['a', 'czernin', 'chuj']
 sorted(a)
 sorted(a, key=lambda word: tuple(alp.index(c) for c in word.lower()))
+
+# %%
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8') # vary depending on your lang/locale
+assert sorted((u'Ab', u'ad', u'aa'),
+  key=cmp_to_key(locale.strcoll)) == [u'aa', u'Ab', u'ad']
 
 # %%

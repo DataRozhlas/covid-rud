@@ -36,6 +36,11 @@ if (location.hostname === 'localhost') {
 }
 
 function draw(did, rec) {
+	Highcharts.setOptions({
+		lang: {
+			numericSymbols: ['tis.', 'mil.', 'mld.', 'T', 'P', 'E']
+		}
+	})
 	Highcharts.chart(did, {
 		chart: {
 			type: 'column',
@@ -45,15 +50,15 @@ function draw(did, rec) {
 			text: `${rec[0]} (${rec[1]})`
 		},
 		subtitle: {
-			text: 'rozdíl v příjmech'
+			text: 'rozdíl v příjmech ze sdílených daní'
 		},
 		xAxis: {
-			categories: ['odhad 2020', '2020 po škrtech']
+			categories: [' odhad 2020 před koronavirem', 'odhad 2020 po koronaviru']
 		},
 		yAxis: {
 			min: 0,
 			title: {
-				text: 'příjmy obce v Kč'
+				text: 'příjmy obce z daní v Kč'
 			},
 		},
 		credits: {
@@ -64,8 +69,7 @@ function draw(did, rec) {
 			align: 'center',
 			verticalAlign: 'bottom',
 			floating: false,
-			backgroundColor:
-				Highcharts.defaultOptions.legend.backgroundColor || 'white',
+			backgroundColor: 'white',
 			borderColor: '#CCC',
 			borderWidth: 1,
 			shadow: false
@@ -83,11 +87,13 @@ function draw(did, rec) {
 			}
 		},
 		series: [{
-			name: 'plánované příjmy',
-			data: [rec[4], rec[4] - rec[3]]
+			name: '1200 korun na obyvatele',
+			data: [0, rec[2]],
+			color: '#de2d26' 
 		}, {
-			name: 'dotace',
-			data: [0, rec[2]]
+			name: 'plánované příjmy',
+			data: [rec[4], rec[4] - rec[3]],
+			color: '#3182bd',
 		}]
 	})
 }
@@ -115,10 +121,18 @@ fetch(host + 'tools/mapa.json')
 		sl.on('change', function(e) {
 			const selected = $('#muni_sel').select2('data')[0].id.split('_')
 			draw('vsechny', data.find(e => (e[0] == selected[0]) & (e[1] == selected[1])))
+
+			// gacka
+			if (typeof ga === 'function') {
+    			console.log('Loaded :'+ ga)
+				ga('send', 'event', 'vizualizace', 'graf', 'select_obce')
+  			} else {
+    			console.log('GA nevidno')
+  			}
 		})
 	})
 
-	draw('vsechny', data.find(e => (e[0] == 'Praha') & (e[1] == 'Praha')))
+	//draw('vsechny', data.find(e => (e[0] == 'Praha') & (e[1] == 'Praha')))
 
 	// divy pro další obce, doplnit obec a okres
 	draw('brno', data.find(e => (e[0] == 'Brno') & (e[1] == 'Brno-město')))
