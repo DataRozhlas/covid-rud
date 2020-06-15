@@ -83,10 +83,13 @@ for ftr in gjs['features']:
             int(tmp['pob'])])
     except:
         print(ftr['properties']['KOD_OBEC'])
-   
+
+# %%
+
+
 # %%
 with open('mapa.json', 'w', encoding='utf-8') as f:
-    f.write(json.dumps(out, ensure_ascii=False))
+    f.write(json.dumps(sorted(out, key=lambda x: x[0]), ensure_ascii=False))
 # %%
 d.columns
 

@@ -19,6 +19,9 @@
 .select2-dropdown li {
     background-image: none !important;
    }
+   #muni_sel {
+	   width: 95%;
+   }
 </style>
 
 <select id="muni_sel"></select>
@@ -99,7 +102,14 @@ fetch(host + 'tools/mapa.json')
 	document.getElementById('muni_sel').innerHTML = selCont
 
 	$(document).ready(function() {
-		const sl = $('#muni_sel').select2()
+		const sl = $('#muni_sel').select2({
+			minimumInputLength: 2, 
+			language: {
+				inputTooShort: function () {
+    				return "Napište aspoň 2 znaky...";
+  				}
+			}
+		})
 		sl.val('Praha_Praha')
 		sl.trigger('change')
 		sl.on('change', function(e) {
