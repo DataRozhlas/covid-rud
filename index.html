@@ -98,43 +98,49 @@ function draw(did, rec) {
 	})
 }
 
+function mtch(params, data) {
+	//console.log(data)
+	if (data.text.split(' (')[0].toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+      return data
+    }
+	return null
+}
+
 fetch(host + 'tools/mapa.json')
   .then(response => response.json())
   .then(data => {
-	let selCont = ``
+	let selCont = `<option></option>`
 	data.forEach(rec => {
-		selCont += `<option value="${rec[0]}_${rec[1]}">${rec[0]} (${rec[1]})</option>`
+		selCont += `<option value="${rec[5]}">${rec[0]} (${rec[1]})</option>`
 	})
 	document.getElementById('muni_sel').innerHTML = selCont
 
 	$(document).ready(function() {
 		const sl = $('#muni_sel').select2({
-			minimumInputLength: 2, 
+			minimumInputLength: 2,
+			placeholder: 'Vyhledejte obec',
+    		allowClear: true,
+			matcher: mtch,
+			width: '95%',
 			language: {
 				inputTooShort: function () {
     				return "Napište aspoň 2 znaky...";
   				}
 			}
 		})
-		sl.val('Praha_Praha')
-		sl.trigger('change')
+
 		sl.on('change', function(e) {
-			const selected = $('#muni_sel').select2('data')[0].id.split('_')
-			draw('vsechny', data.find(e => (e[0] == selected[0]) & (e[1] == selected[1])))
+			const selected = $('#muni_sel').select2('data')[0].id
+			draw('vsechny', data.find(e => e[5] == selected))
 
 			// gacka
 			if (typeof ga === 'function') {
-    			console.log('Loaded :'+ ga)
-				ga('send', 'event', 'vizualizace', 'graf', 'select_obce')
-  			} else {
-    			console.log('GA nevidno')
+				ga('gtm1.send', 'event', 'vizualizace', 'graf', 'select_obce')
   			}
 		})
 	})
 
-	//draw('vsechny', data.find(e => (e[0] == 'Praha') & (e[1] == 'Praha')))
-
 	// divy pro další obce, doplnit obec a okres
-	draw('brno', data.find(e => (e[0] == 'Brno') & (e[1] == 'Brno-město')))
+	draw('brno', data.find(e => e[5] === 582786))
 })
 </script>
