@@ -84,6 +84,15 @@ function draw(did, rec) {
 				dataLabels: {
 					enabled: false
 				}
+			},
+			series: {
+				events: {
+					legendItemClick: function () {
+						if (typeof ga === 'function') {
+							ga('gtm1.send', 'event', 'vizualizace', 'graf', 'filtr_legenda')
+  						}
+					}
+				}
 			}
 		},
 		series: [{
@@ -141,6 +150,9 @@ fetch(host + 'tools/mapa.json')
 	})
 
 	// divy pro další obce, doplnit obec a okres
-	draw('brno', data.find(e => e[5] === 582786))
+	draw('brezina', data.find(e => e[5] === 581429))
+	draw('velvary', data.find(e => e[5] === 533041))
+	draw('smrzovka', data.find(e => e[5] === 563811))
+	draw('praha', data.find(e => e[5] === 554782))
 })
 </script>
